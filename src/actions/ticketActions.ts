@@ -6,6 +6,23 @@ import { TicketCategory, TicketPriority, TicketStatus } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+export async function deleteTicket(ticketId: string) {
+  try {
+    await prisma.ticket.delete({
+      where: {
+        id: ticketId,
+      },
+    });
+
+    revalidatePath("/dashboard/tickets", "page");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la suppression :", error);
+    return { success: false, error: "Impossible de supprimer le ticket." };
+  }
+}
+
 export async function createTicket(previous: any, formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session || session.user?.role !== "ADMIN") {

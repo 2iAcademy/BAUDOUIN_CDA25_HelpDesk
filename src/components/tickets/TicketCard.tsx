@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { UpdateTicketForm } from "@/components/admin/forms/UpdateTicketForm";
+import { deleteTicket } from "@/actions/ticketActions";
+import { toast } from "react-toastify";
 
 import { priorityLabels, priorityColors, statusLabels } from "@/utils/labels";
 
@@ -19,6 +21,28 @@ export default function TicketCard({
 }: Props) {
   const isAdmin = currentUser?.role === "ADMIN";
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Confirmation de sécurité
+  const handleDelete = async () => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce ticket ?")) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await deleteTicket(ticket.id);
+
+      if (res.success) {
+        toast.success("Ticket supprimé avec succès");
+      } else {
+        toast.error("Impossible de supprimer le ticket.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Une erreur inattendue est survenue.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -29,7 +53,8 @@ export default function TicketCard({
               e.preventDefault();
               setModalIsOpen(true);
             }}
-            className="text-gray-500 hover:text-black"
+            disabled={isDeleting}
+            className="text-gray-500 hover:text-black disabled:opacity-50"
           >
             Modifier
           </button>
@@ -37,16 +62,17 @@ export default function TicketCard({
           <button
             onClick={(e) => {
               e.preventDefault();
+              handleDelete();
             }}
-            className="text-red-500 hover:text-red-700"
+            disabled={isDeleting}
+            className="text-red-500 hover:text-red-700 disabled:opacity-50"
           >
-            Supprimer
+            {isDeleting ? "Suppression..." : "Supprimer"}
           </button>
         </div>
       )}
 
       <Link href={`/dashboard/tickets/${ticket.id}`} className="block">
-        {/* Header */}
         <div className="flex items-start justify-between gap-4 pr-28">
           <div>
             <h2 className="text-lg font-semibold">{ticket.title}</h2>
