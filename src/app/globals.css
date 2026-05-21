@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+
+    --brand-dark: #1A2F1A;
+    --brand-bg: #B7D8A8;
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: "Montserrat", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.font-brand-serif {
+    font-family: "Playfair Display", serif;
+}
+
+h2 {
+    font-weight: bold;
+}

@@ -1,0 +1,11 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+// Connexion à la DB
+datasource db {
+  provider = "postgresql"
+}
+
+// Tables
