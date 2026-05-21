@@ -25,6 +25,13 @@ export async function createTicket(previous: any, formData: FormData) {
 
   const technicianId = formData.get("technicianId") as string;
 
+  if (!title || !description || !client || !priority || !category) {
+    return {
+      success: false,
+      error: "Tous les champs obligatoires doivent être remplis.",
+    };
+  }
+
   try {
     const newTicket = await prisma.ticket.create({
       data: {
