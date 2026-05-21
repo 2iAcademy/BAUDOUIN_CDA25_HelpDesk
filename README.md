@@ -65,6 +65,7 @@ npm run dev
 
 ## Commandes utiles
 
+Permet de visualiser la base de donnée sans avoir besoin de SGBD.
 ```bash
 npx prisma studio
 ```
