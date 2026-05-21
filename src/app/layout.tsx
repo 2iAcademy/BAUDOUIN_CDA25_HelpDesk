@@ -7,8 +7,7 @@ config.autoAddCss = false;
 
 export const metadata: Metadata = {
   title: "HelpDesk",
-  description:
-    "Un outil en ligne personnalisé pour la gestion de vos tickets",
+  description: "Un outil en ligne personnalisé pour la gestion de vos tickets",
 };
 
 export default function RootLayout({
