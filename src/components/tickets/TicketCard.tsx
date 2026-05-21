@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { UpdateTicketForm } from "@/components/admin/forms/UpdateTicketForm";
 
-export default function TicketCard({ ticket }: { ticket: any }) {
+import { priorityLabels, priorityColors, statusLabels } from "@/utils/labels";
+
+type Props = {
+  ticket: any;
+  technicians: any[];
+};
+
+export default function TicketCard({ ticket, technicians }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   return (
@@ -33,43 +41,39 @@ export default function TicketCard({ ticket }: { ticket: any }) {
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pr-28">
           <div>
-            <h2 className="text-lg font-semibold">{ticket.label}</h2>
+            <h2 className="text-lg font-semibold">{ticket.title}</h2>
 
             <p className="mt-1 text-sm text-gray-500">{ticket.client}</p>
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-6 text-sm">
-          <div>
-            <span className="text-gray-500">Priorité :</span> {ticket.priority}
-          </div>
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
+          <span
+            className={`rounded-full px-2 py-1 text-xs font-medium ${
+              priorityColors[ticket.priority as keyof typeof priorityColors]
+            }`}
+          >
+            {priorityLabels[ticket.priority as keyof typeof priorityLabels]}
+          </span>
 
-          <div>
-            <span className="text-gray-500">Statut :</span> {ticket.status}
-          </div>
+          <span className="text-gray-600">
+            {statusLabels[ticket.status as keyof typeof statusLabels]}
+          </span>
 
-          <div>
-            <span className="text-gray-500">Technicien :</span>{" "}
+          <span className="text-gray-600">
             {ticket.technician
               ? `${ticket.technician.firstName} ${ticket.technician.name}`
               : "Non affecté"}
-          </div>
+          </span>
         </div>
       </Link>
 
       {modalIsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6">
-            <h2 className="text-xl font-semibold">Modifier le ticket</h2>
-
-            <button
-              onClick={() => setModalIsOpen(false)}
-              className="mt-6 rounded border px-4 py-2"
-            >
-              Fermer
-            </button>
-          </div>
-        </div>
+        <UpdateTicketForm
+          ticket={ticket}
+          technicians={technicians}
+          onClose={() => setModalIsOpen(false)}
+        />
       )}
     </div>
   );
