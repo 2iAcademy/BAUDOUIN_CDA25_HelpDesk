@@ -23,7 +23,7 @@ export default function LoginPage() {
     if (result?.error) {
       setError("Identifiants incorrects.");
     } else {
-      router.push("/dashboard");
+      router.push("/dashboard/tickets");
       router.refresh();
     }
   };
