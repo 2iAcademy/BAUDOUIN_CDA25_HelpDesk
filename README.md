@@ -11,6 +11,21 @@ Application de gestion de tickets réalisée avec :
 
 ---
 
+# Planning prévisionnel
+
+En début de journée, un planning prévisionnel a été établi pour découper le travail en tâches concrètes avec une estimation de durée.
+
+| Horaires | Tâche                                                                                                                                           | Statut |
+| :--- |:------------------------------------------------------------------------------------------------------------------------------------------------|:------:|
+| **9h - 10h** | Choix des technos, création dépôt Git, modélisation de la BDD                                                                                   |   ✅    |
+| **10h - 11h** | Installation du projet (Framework, ORM, dépendances) + création des modèles                                                                     |   ✅    |
+| **11h - 12h30** | Initialisation de la BDD + accès aux données                                                                                                    |   ✅    |
+| **14h - 15h** | Affichage liste des tickets + détails d'un ticket + form de création/modification d'un ticket<br/>Optionnel : gérer la création de commentaires |   ✅    |
+| **15h - 16h30** | Authentification pour accéder au /Dashboard + droits sur les actions + dashboard                                                                |   ✅    |
+| **16h30 - 17h30** | Tests unitaires                                                                                                                                 |   ✅    |
+
+---
+
 # Installation du projet
 
 ## 1. Cloner le dépôt
