@@ -3,8 +3,19 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../lib/prisma";
 import { TicketCategory, TicketPriority, TicketStatus } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function createTicket(previous: any, formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "ADMIN") {
+    return {
+      success: false,
+      error:
+        "Accès refusé. Seuls les administrateurs peuvent créer des tickets.",
+    };
+  }
+
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const client = formData.get("client") as string;
