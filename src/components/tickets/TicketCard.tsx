@@ -9,33 +9,41 @@ import { priorityLabels, priorityColors, statusLabels } from "@/utils/labels";
 type Props = {
   ticket: any;
   technicians: any[];
+  currentUser: any;
 };
 
-export default function TicketCard({ ticket, technicians }: Props) {
+export default function TicketCard({
+  ticket,
+  technicians,
+  currentUser,
+}: Props) {
+  const isAdmin = currentUser?.role === "ADMIN";
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   return (
     <div className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="absolute top-5 right-5 z-10 flex gap-3 text-sm">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setModalIsOpen(true);
-          }}
-          className="text-gray-500 hover:text-black"
-        >
-          Modifier
-        </button>
+      {isAdmin && (
+        <div className="absolute top-5 right-5 z-10 flex gap-3 text-sm">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setModalIsOpen(true);
+            }}
+            className="text-gray-500 hover:text-black"
+          >
+            Modifier
+          </button>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-          }}
-          className="text-red-500 hover:text-red-700"
-        >
-          Supprimer
-        </button>
-      </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+            className="text-red-500 hover:text-red-700"
+          >
+            Supprimer
+          </button>
+        </div>
+      )}
 
       <Link href={`/dashboard/tickets/${ticket.id}`} className="block">
         {/* Header */}
