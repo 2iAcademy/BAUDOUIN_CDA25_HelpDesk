@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-gray-100 p-4 flex flex-col justify-between">
+      <aside className="sticky top-0 h-screen w-64 border-r bg-gray-100 p-4 flex flex-col justify-between">
         <div>
           <h2 className="mb-6 text-2xl font-bold">HelpDesk Pro</h2>
 
@@ -42,9 +42,11 @@ export default async function DashboardLayout({
           <p className="px-3 text-sm font-semibold text-gray-700 truncate">
             {session.user?.name}
           </p>
+
           <p className="px-3 mb-3 text-xs text-gray-500 truncate">
             {session.user?.email}
           </p>
+
           <LogoutButton />
         </div>
       </aside>
