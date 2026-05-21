@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { AddTicketForm } from "@/components/admin/forms/AddTicketForm";
 
-export default function AddTicketButton() {
+type Props = {
+  technicians: any[];
+};
+
+export default function AddTicketButton({ technicians }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   return (
@@ -15,7 +19,12 @@ export default function AddTicketButton() {
         Nouveau ticket
       </button>
 
-      {modalIsOpen && <AddTicketForm onClose={() => setModalIsOpen(false)} />}
+      {modalIsOpen && (
+        <AddTicketForm
+          technicians={technicians}
+          onClose={() => setModalIsOpen(false)}
+        />
+      )}
     </>
   );
 }
