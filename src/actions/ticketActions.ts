@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../lib/prisma";
-import { TicketCategory, TicketPriority } from "@prisma/client";
+import { TicketCategory, TicketPriority, TicketStatus } from "@prisma/client";
 
 export async function createTicket(previous: any, formData: FormData) {
   const title = formData.get("title") as string;
@@ -12,6 +12,8 @@ export async function createTicket(previous: any, formData: FormData) {
   const priority = formData.get("priority") as TicketPriority;
   const category = formData.get("category") as TicketCategory;
 
+  const technicianId = formData.get("technicianId") as string;
+
   try {
     const newTicket = await prisma.ticket.create({
       data: {
@@ -20,6 +22,7 @@ export async function createTicket(previous: any, formData: FormData) {
         client: client,
         priority: priority,
         category: category,
+        technicianId: technicianId || null,
       },
     });
     revalidatePath("/dashboard/tickets", "page");
@@ -39,7 +42,34 @@ export async function updateTicket(previous: any, formData: FormData) {
   const priority = formData.get("priority") as TicketPriority;
   const category = formData.get("category") as TicketCategory;
 
+  const status = formData.get("status") as TicketStatus;
+
   const technicianId = formData.get("technicianId") as string;
+
+  const currentTicket = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+  });
+
+  if (
+    status === "IN_PROGRESS" &&
+    (!technicianId || technicianId.trim() === "")
+  ) {
+    return {
+      success: false,
+      error: "Un ticket ne peut pas passer 'En cours' sans technicien affecté.",
+    };
+  }
+
+  if (!currentTicket) {
+    return { success: false, error: "Ticket introuvable." };
+  }
+
+  if (currentTicket.status === "CLOSED") {
+    return {
+      success: false,
+      error: "Ce ticket est clôturé. Il ne peut plus être modifié.",
+    };
+  }
 
   try {
     const updatedTicket = await prisma.ticket.update({
@@ -50,6 +80,7 @@ export async function updateTicket(previous: any, formData: FormData) {
         client: client,
         priority: priority,
         category: category,
+        status: status,
         technicianId: technicianId || null,
       },
     });

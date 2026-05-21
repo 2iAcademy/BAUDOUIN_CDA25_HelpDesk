@@ -7,9 +7,10 @@ import { toast } from "react-toastify";
 
 type Props = {
   onClose: () => void;
+  technicians: any[];
 };
 
-export function AddTicketForm({ onClose }: Props) {
+export function AddTicketForm({ onClose, technicians }: Props) {
   const [state, action, pending] = useActionState(createTicket, null);
 
   useEffect(() => {
@@ -90,6 +91,23 @@ export function AddTicketForm({ onClose }: Props) {
             <option value="SOFTWARE">Logiciel</option>
             <option value="SECURITY">Sécurité</option>
             <option value="OTHER">Autre</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Technicien</label>
+
+          <select
+            name="technicianId"
+            className="mt-1 w-full rounded border px-3 py-2"
+            defaultValue=""
+          >
+            <option value="">Non affecté</option>
+
+            {technicians.map((technician) => (
+              <option key={technician.id} value={technician.id}>
+                {technician.firstName} {technician.name}
+              </option>
+            ))}
           </select>
         </div>
 

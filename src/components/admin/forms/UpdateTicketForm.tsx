@@ -1,7 +1,7 @@
 "use client";
 
 import { Modal } from "@/components/admin/Modal";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { updateTicket } from "@/actions/ticketActions";
 import { toast } from "react-toastify";
 
@@ -13,6 +13,11 @@ type Props = {
 
 export function UpdateTicketForm({ onClose, ticket, technicians }: Props) {
   const [state, action, pending] = useActionState(updateTicket, null);
+
+  const [selectedStatus, setSelectedStatus] = useState(ticket.status ?? "OPEN");
+  const [selectedTechnician, setSelectedTechnician] = useState(
+    ticket.technicianId ?? "",
+  );
 
   useEffect(() => {
     if (state !== null) {
@@ -27,9 +32,18 @@ export function UpdateTicketForm({ onClose, ticket, technicians }: Props) {
     }
   }, [state, onClose]);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (selectedStatus === "IN_PROGRESS" && !selectedTechnician) {
+      e.preventDefault(); // Bloque l'envoi du formulaire
+      toast.error(
+        "Veuillez affecter un technicien pour passer le ticket 'En cours'.",
+      );
+    }
+  };
+
   return (
     <Modal onClose={onClose}>
-      <form action={action} className="space-y-4">
+      <form action={action} onSubmit={handleSubmit} className="space-y-4">
         <h2 className="text-xl font-semibold">Modifier le ticket</h2>
 
         <input type="hidden" name="ticketId" value={ticket.id} />
@@ -101,20 +115,41 @@ export function UpdateTicketForm({ onClose, ticket, technicians }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Technicien</label>
-
+          <label className="block text-sm font-medium">
+            Technicien{" "}
+            {selectedStatus === "IN_PROGRESS" && (
+              <span className="text-red-500">*</span>
+            )}
+          </label>
           <select
             name="technicianId"
-            defaultValue={ticket.technicianId ?? ""}
+            value={selectedTechnician}
+            onChange={(e) => setSelectedTechnician(e.target.value)}
             className="mt-1 w-full rounded border px-3 py-2"
           >
             <option value="">Non affecté</option>
-
             {technicians.map((technician) => (
               <option key={technician.id} value={technician.id}>
                 {technician.firstName} {technician.name}
               </option>
             ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Statut</label>
+          <select
+            name="status"
+            required
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="mt-1 w-full rounded border px-3 py-2"
+          >
+            <option value="OPEN">Ouvert</option>
+            <option value="IN_PROGRESS">En cours</option>
+            <option value="PENDING">En attente</option>
+            <option value="RESOLVED">Résolu</option>
+            <option value="CLOSED">Fermé</option>
           </select>
         </div>
 
