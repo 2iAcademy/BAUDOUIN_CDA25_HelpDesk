@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "./generated/prisma"
+  provider = "prisma-client-js"
 }
 
 // Connexion à la DB
@@ -8,4 +7,81 @@ datasource db {
   provider = "postgresql"
 }
 
+// Enums
+enum UserRole {
+  ADMIN
+  TECHNICIAN
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketCategory {
+  NETWORK
+  HARDWARE
+  SOFTWARE
+  SECURITY
+  OTHER
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING
+  RESOLVED
+  CLOSED
+}
+
 // Tables
+model User {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email          String   @unique @db.VarChar(255)
+  hashedPassword String   @map("hashed_password")
+  firstName      String   @db.VarChar(255) @map("first_name")
+  name           String   @db.VarChar(255)
+  role           UserRole @default(TECHNICIAN)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  assignedTickets Ticket[]
+  comments        Comment[]
+
+  @@map("users")
+}
+
+model Ticket {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String         @db.VarChar(255)
+  description String         @db.Text
+  client      String         @db.VarChar(255)
+  priority    TicketPriority @default(MEDIUM)
+  category    TicketCategory
+  status      TicketStatus   @default(OPEN)
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  technicianId String? @map("id_technician") @db.Uuid
+  technician   User?   @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+
+  comments Comment[]
+
+  @@map("tickets")
+}
+
+model Comment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  description String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  ticketId String @map("id_ticket") @db.Uuid
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  userId String @map("id_user") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
